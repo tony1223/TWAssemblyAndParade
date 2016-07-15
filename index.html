@@ -7,6 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="leaflet.css" />
+  <style>
+    .text-labels{
+      width:200px !important;
+      margin-left:-20px !important;
+      color:black;
+    }
+  </style>
 </head>
 <body>
   <div id="mapid" style="width: 1000px; height: 600px"></div>
@@ -65,6 +72,14 @@ var cellsAPI = function(sid,callback){
       }
 
       locations.forEach(function(loc){
+
+          L.marker(loc.latlng, {
+              icon: L.divIcon({
+                  className: 'text-labels',   // Set class for CSS styling
+                  html: loc.title
+              }),
+              zIndexOffset: 1000     // Make appear above other map features
+          }).addTo(mymap);        
           L.circle(loc.latlng, loc.building || 20 /* 因為標準是在院體外，不是跟建築物中心距離，所以補一點，不會太精準。 */, {
             color: 'gray',
             title:loc.title,
