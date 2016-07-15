@@ -59,7 +59,8 @@ var cellsAPI = function(sid,callback){
           latlng:lines[i][2].split(","),
           title:lines[i][1],
           meters: parseInt(lines[i][3],10),
-          building: parseInt(lines[i][4],10)
+          building: parseInt(lines[i][4],10),
+          polygons: lines[i][5] && JSON.parse(lines[i][5])
         });
       }
 
@@ -73,11 +74,20 @@ var cellsAPI = function(sid,callback){
           // L.marker(loc.latlng,{title:loc.title}).addTo(mymap)
           // .bindPopup(loc.title)
 
-          L.circle(loc.latlng, (loc.meters||30) +(loc.building||20) /* 因為標準是在院體外，不是跟建築物中心距離，所以補一點，不會太精準。 */, {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.5
-          }).addTo(mymap).bindPopup(loc.title+" 的禁制區");
+          if(loc.polygons){
+
+            L.polygon(loc.polygons, {
+              color: 'red',
+              fillColor: '#f03',
+              fillOpacity: 0.5
+            }).addTo(mymap).bindPopup(loc.title+" 的禁制區");
+          }else{
+            L.circle(loc.latlng, (loc.meters||30) +(loc.building||20) /* 因為標準是在院體外，不是跟建築物中心距離，所以可能不會太精準。 */, {
+              color: 'red',
+              fillColor: '#f03',
+              fillOpacity: 0.5
+            }).addTo(mymap).bindPopup(loc.title+" 的禁制區");
+          }
       });
     });
 
