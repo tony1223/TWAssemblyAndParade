@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leaflet Quick Start Guide Example</title>
+  <title>集會遊行禁制區示意圖（概略版）</title>
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,19 +53,27 @@ var cellsAPI = function(sid,callback){
 
     cellsAPI("1Fd0YPup2zzAYBzcROLH4cLixiEBLtAUmuNTJqch_PKk",function(lines){
       var locations = [];
+      console.log(lines);
       for(var i = 4;i<lines.length;++i){
         locations.push({
           latlng:lines[i][2].split(","),
           title:lines[i][1],
-          meters: parseInt(lines[i][3],10)
+          meters: parseInt(lines[i][3],10),
+          building: parseInt(lines[i][4],10)
         });
       }
 
       locations.forEach(function(loc){
-          L.marker(loc.latlng,{title:loc.title}).addTo(mymap)
-          .bindPopup(loc.title)
+          L.circle(loc.latlng, loc.building || 20 /* 因為標準是在院體外，不是跟建築物中心距離，所以補一點，不會太精準。 */, {
+            color: 'gray',
+            title:loc.title,
+            fillColor: '#f03',
+            fillOpacity: 0.5
+          }).addTo(mymap).bindPopup(loc.title);
+          // L.marker(loc.latlng,{title:loc.title}).addTo(mymap)
+          // .bindPopup(loc.title)
 
-          L.circle(loc.latlng, loc.meters + 30 /* 因為標準是在院體外，不是跟建築物中心距離，所以補一點 */, {
+          L.circle(loc.latlng, (loc.meters||30) +(loc.building||20) /* 因為標準是在院體外，不是跟建築物中心距離，所以補一點，不會太精準。 */, {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.5
